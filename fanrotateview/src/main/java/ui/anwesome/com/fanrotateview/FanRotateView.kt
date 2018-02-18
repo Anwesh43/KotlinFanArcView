@@ -120,8 +120,11 @@ class FanRotateView(ctx:Context, var n:Int = 4):View(ctx) {
         }
     }
     companion object {
-        fun create(activity: Activity):FanRotateView {
+        fun create(activity: Activity,vararg n:Int):FanRotateView {
             val view = FanRotateView(activity)
+            if(n.size == 1) {
+                view.n = Math.max(n[0], view.n)
+            }
             activity.setContentView(view)
             return view
         }
