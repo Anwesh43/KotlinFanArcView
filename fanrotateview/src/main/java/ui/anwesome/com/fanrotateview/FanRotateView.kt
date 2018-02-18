@@ -19,4 +19,29 @@ class FanRotateView(ctx:Context):View(ctx) {
         }
         return true
     }
+    data class Animator(var view:View, var animated:Boolean = false) {
+        fun animate(updatecb: () -> Unit) {
+            if(animated) {
+                try {
+                    updatecb()
+                    Thread.sleep(50)
+                    view.invalidate()
+                }
+                catch(ex:Exception) {
+
+                }
+            }
+        }
+        fun stop() {
+            if(animated) {
+                animated = false
+            }
+        }
+        fun start() {
+            if(!animated) {
+                animated = true
+                view.postInvalidate()
+            }
+        }
+    }
 }
