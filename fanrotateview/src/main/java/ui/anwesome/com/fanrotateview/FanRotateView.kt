@@ -83,7 +83,7 @@ class FanRotateView(ctx:Context, var n:Int = 4):View(ctx) {
             canvas.rotate(90f)
             val size = 2*Math.min(w,h)/3
             val sweep = state.j * deg + deg * state.scale
-            canvas.drawArc(RectF(-size/2, -size/2, -size/2, -size/2), -sweep, 2 * sweep, true, paint)
+            canvas.drawArc(RectF(-size/2, -size/2, size/2, size/2), -sweep, 2 * sweep, true, paint)
             canvas.restore()
         }
         fun update(stopcb : (Float, Int) -> Unit) {
