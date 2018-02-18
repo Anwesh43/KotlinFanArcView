@@ -85,6 +85,11 @@ class FanRotateView(ctx:Context, var n:Int = 4):View(ctx) {
             val sweep = state.j * deg + deg * state.scale
             canvas.drawArc(RectF(-size/2, -size/2, size/2, size/2), -sweep, 2 * sweep, true, paint)
             canvas.restore()
+            paint.color = Color.WHITE
+            paint.textSize = Math.min(w,h)/12
+            val text = "${state.j}"
+            val tw = paint.measureText(text)
+            canvas.drawText(text, w/2 - tw/2 , h/5 + paint.textSize/2, paint)
         }
         fun update(stopcb : (Float, Int) -> Unit) {
             state.update(stopcb)
