@@ -44,4 +44,31 @@ class FanRotateView(ctx:Context):View(ctx) {
             }
         }
     }
+    data class State(var n:Int, var prevScale: Float = 0f, var dir:Float = 0f, var j:Int = 0, var jDir:Int = 1) {
+        var scale:Float = 0f
+        fun update(stopcb: (Float, Int) -> Unit) {
+            scale += dir * 0.1f
+            if(Math.abs(scale - prevScale) > 1) {
+                j += jDir
+                scale = prevScale + dir
+                dir = 0f
+                stopcb(scale, j)
+                if(j == n || j == -1) {
+                    jDir *= -1
+                    j += jDir
+                    prevScale = scale
+                }
+                else {
+                    scale = prevScale
+                }
+                stopcb(scale, j)
+            }
+        }
+        fun startUpdating(startcb : () -> Unit) {
+            if(dir == 0f) {
+                dir = 1f - 2*scale 
+                startcb()
+            }
+        }
+    }
 }
