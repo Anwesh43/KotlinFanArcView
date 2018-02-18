@@ -8,13 +8,14 @@ import android.content.*
 import android.graphics.*
 class FanRotateView(ctx:Context, var n:Int = 4):View(ctx) {
     val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    val renderer = Renderer(this)
     override fun onDraw(canvas:Canvas) {
-
+        renderer.render(canvas, paint)
     }
     override fun onTouchEvent(event:MotionEvent):Boolean {
         when(event.action) {
             MotionEvent.ACTION_DOWN -> {
-
+                renderer.handleTap()
             }
         }
         return true
@@ -75,6 +76,7 @@ class FanRotateView(ctx:Context, var n:Int = 4):View(ctx) {
         val deg:Float = 360f/(2*n)
         val state = State(n)
         fun draw(canvas : Canvas, paint : Paint) {
+            paint.color = Color.parseColor("#1565C0")
             canvas.save()
             canvas.translate(w/2, h/2)
             canvas.rotate(90f)
