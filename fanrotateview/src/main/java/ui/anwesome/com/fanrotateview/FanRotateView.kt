@@ -6,7 +6,7 @@ package ui.anwesome.com.fanrotateview
 import android.view.*
 import android.content.*
 import android.graphics.*
-class FanRotateView(ctx:Context):View(ctx) {
+class FanRotateView(ctx:Context, var n:Int = 4):View(ctx) {
     val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     override fun onDraw(canvas:Canvas) {
 
@@ -49,10 +49,10 @@ class FanRotateView(ctx:Context):View(ctx) {
         fun update(stopcb: (Float, Int) -> Unit) {
             scale += dir * 0.1f
             if(Math.abs(scale - prevScale) > 1) {
-                j += jDir
                 scale = prevScale + dir
-                dir = 0f
                 stopcb(scale, j)
+                j += jDir
+                dir = 0f
                 if(j == n || j == -1) {
                     jDir *= -1
                     j += jDir
@@ -61,13 +61,58 @@ class FanRotateView(ctx:Context):View(ctx) {
                 else {
                     scale = prevScale
                 }
-                stopcb(scale, j)
+
             }
         }
         fun startUpdating(startcb : () -> Unit) {
             if(dir == 0f) {
-                dir = 1f - 2*scale 
+                dir = 1f - 2*scale
                 startcb()
+            }
+        }
+    }
+    data class FanRotate(var w:Float, var h: Float, var n:Int) {
+        val deg:Float = 360f/(2*n)
+        val state = State(n)
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.save()
+            canvas.translate(w/2, h/2)
+            canvas.rotate(90f)
+            val size = 2*Math.min(w,h)/3
+            val sweep = state.j * deg + deg * state.scale
+            canvas.drawArc(RectF(-size/2, -size/2, -size/2, -size/2), -sweep, 2 * sweep, true, paint)
+            canvas.restore()
+        }
+        fun update(stopcb : (Float, Int) -> Unit) {
+            state.update(stopcb)
+        }
+        fun startUpdating(startcb : () -> Unit) {
+            state.startUpdating(startcb)
+        }
+    }
+    data class Renderer(var view: FanRotateView, var time: Int = 0) {
+        val animator = Animator(view)
+        var fanRotate: FanRotate ?= null
+        fun render(canvas:Canvas, paint: Paint) {
+            if(time == 0) {
+                val w = canvas.width.toFloat()
+                val h = canvas.height.toFloat()
+                if(view.n > 0) {
+                    fanRotate = FanRotate(w, h, view.n)
+                }
+            }
+            canvas.drawColor(Color.parseColor("#212121"))
+            fanRotate?.draw(canvas, paint)
+            time++
+            animator.animate {
+                fanRotate?.update {scale, j ->
+                    animator.stop()
+                }
+            }
+        }
+        fun handleTap() {
+            fanRotate?.startUpdating {
+                animator.start()
             }
         }
     }
