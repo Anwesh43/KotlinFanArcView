@@ -3,6 +3,7 @@ package ui.anwesome.com.fanrotateview
 /**
  * Created by anweshmishra on 19/02/18.
  */
+import android.app.Activity
 import android.view.*
 import android.content.*
 import android.graphics.*
@@ -116,6 +117,13 @@ class FanRotateView(ctx:Context, var n:Int = 4):View(ctx) {
             fanRotate?.startUpdating {
                 animator.start()
             }
+        }
+    }
+    companion object {
+        fun create(activity: Activity):FanRotateView {
+            val view = FanRotateView(activity)
+            activity.setContentView(view)
+            return view
         }
     }
 }
